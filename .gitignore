@@ -12,5 +12,4 @@
 !/CODE/caracAL/
 *.exe
 /logs/
-git rm -r --cached additional_programs/loki/wal/
-
+/additional_programs/loki/wal/
