@@ -7,8 +7,6 @@
 /localStorage/*
 !/localStorage/README.md
 .idea/
-/CODE/*
-!/CODE/README.md
 !/CODE/caracAL/
 *.exe
 /logs/
