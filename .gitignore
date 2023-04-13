@@ -11,5 +11,5 @@
 !/CODE/README.md
 !/CODE/caracAL/
 *.exe
-/logs/*
-/additional_programs/loki/wal/*
+/logs/
+/additional_programs/loki/wal/
