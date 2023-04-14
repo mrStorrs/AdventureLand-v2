@@ -451,7 +451,7 @@ async function slowLoop() {
         }
 
     } catch (e) {
-        game_log("error=slowLoop " + e)
+        game_log("error=slowLoopParty " + e)
     }
 
     try {
@@ -465,8 +465,18 @@ async function slowLoop() {
         }
 
     } catch (e) {
-        game_log("error=slowLoop " + show_json(e))
+        game_log("error=slowLoopLostEaringExchange")
         show_json(e)
+    }
+
+    //check if we are not on the right map for farming. added to avoid getting stuck in 
+    //allready finished monsterhunts. or Stuck in various other ways. may
+    try {
+        if(character.map != bestiary[mobs_to_farm[0]].location.map  && !isSmartMoving()){
+            move_to_farming_loc(); 
+        }
+    } catch (e) {
+        game_log("error=slowLoopMoveToFarming")
     }
     setTimeout(slowLoop, 10000);
 }
@@ -1292,4 +1302,11 @@ function getLocLocalFighters() {
         }
     }
     return (Math.max.apply(null, dArray));
+}
+
+function isSmartMoving(){
+    if(smart.moving || smart.pathing){
+        return true;
+    }
+    return false;
 }
