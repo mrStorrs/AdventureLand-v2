@@ -116,6 +116,8 @@ setInterval(function () {
                 go_check_bank();
             } else if (character.x != -107 && character.y != -50){
                 smart_move({ map: "main", x: -107, y: -50 })
+            } else {
+                sellJunk();
             }
         }
 

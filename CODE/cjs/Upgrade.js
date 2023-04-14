@@ -70,11 +70,11 @@ function upgrade_item(item_index, cur_lev, rarity, itemName) {
 
             }
         }
-        // } else if (rarity == 3) {
-        //     upgrade(item_index, 1);
-        // } else {
-        //     upgrade(item_index, 0);
-        // }
+
+        //will eventually want to add primordial essence here. 
+        if (rarity == 4) {
+            getUpgradeChance(item_index, locate_item("scroll2"), itemName);
+        }
     }
     return null;
 }
@@ -94,11 +94,12 @@ function go_upgrade() {
             if (items[i].name in items_to_upgrade
                 && items_to_upgrade[items[i].name][0] > items[i].level) {
 
-                var upgrading = true; 
-                //call upgrade item function
-                upgrade_item(i, items[i].level,
-                    items_to_upgrade[items[i].name][1]); //upgrade
-
+                if(items[i].p == undefined){
+                    var upgrading = true;
+                    //call upgrade item function
+                    upgrade_item(i, items[i].level,
+                        items_to_upgrade[items[i].name][1]); //upgrade
+                }
                 break; //end  when item found
             } else {
 
