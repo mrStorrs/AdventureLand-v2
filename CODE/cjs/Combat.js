@@ -32,6 +32,7 @@ var target = get_targeted_monster();
 var booster_index = 2
 var timeTargetAquired = new Date() / 1000;
 var groupedIndex = 0; 
+var mainTarget = mobs_to_farm[0]; 
 
 
 last_collection = new Date() / 1000 - 120;
@@ -457,11 +458,16 @@ async function slowLoop() {
     try {
         var earringIndex = locate_item("lostearring")
         if (earringIndex >= 0){
-            if (getDistance(character, find_npc("pwincess")) > 200) {
+            if (getDistance(character, find_npc("pwincess")) > 150) {
                 await smart_move("pwincess")
             }
             game_log("action=exchangingEarring " + "character=" + character.name);
-            await exchange(earringIndex);
+            result = await exchange(earringIndex);
+            if(result.success){
+                game_log("action=exchangingEarring " + "character=" + character.name + " itemExchangeReward=" + result.reward);
+            } else {
+                game_log("action=exchangingEarring " + "character=" + character.name + " itemExchangeFailed=" + result.reason);
+            }
         }
 
     } catch (e) {
@@ -563,16 +569,16 @@ async function mHuntLoop() {
         }
         var huntArray = [localStorage.getItem("hunt0"), localStorage.getItem("hunt1"), localStorage.getItem("hunt2")]
         var huntFound = false; 
+        localStorage.setItem("huntFound", "false")
         for (mob of monsterHuntMobs) {
             if (huntArray.includes(mob)) {
+                localStorage.setItem("huntFound", "true")
                 huntFound = true;
                 if(!huntArray.includes(mobs_to_farm[0])){
                     timeLeft = localStorage.getItem("hunt"+huntArray.indexOf(mob)+"time");
                     if(timeLeft > 600000){
                         // localStorage.setItem("gMoveState", "groupUp")
                         game_log("setting monster hunt mob")
-                        mobs_to_farm.push("temp")
-                        mobs_to_farm[mobs_to_farm.length - 1] = mobs_to_farm[0]
                         mobs_to_farm[0] = mob;
                         game_log("action=mHunt "+ mobs_to_farm)
                         move_to_farming_loc();
@@ -586,12 +592,12 @@ async function mHuntLoop() {
     }
 
     if(!huntFound){
-        mobs_to_farm = get_mobs_to_farm();
+        mobs_to_farm[0] = mainTarget;
         localStorage.setItem("mobsToFarm", mobs_to_farm)
     }
     setTimeout(mHuntLoop, 2000);
 }
-setTimeout(mHuntLoop(), 10000)
+// setTimeout(mHuntLoop(), 10000)
 
 //notes for optomizing grid!!! do not check nodes that allready exist inside the array! 
 //build as the char moves around and then store. before checking can move test if it is in the
@@ -998,12 +1004,11 @@ function find_target(includeTargeted) {
         if (mobs_to_farm.includes(target.mtype)) {
             var targetStrat = bestiary[target.mtype].strategy;
             //found a dangerous monster. lets group up. 
-            if (target.hp > 2000 && target.mtype != "snake" && target.mtype != "osnake" && target.mtype != "rat") {
-                game_log("found dangerous: " + target.mtype + " " + target.hp)
-                localStorage.setItem("dangerousTargetFound", new Date / 1000)
-                localStorage.setItem("gCombatState", "tank")
-                target.attacking++;
-            }
+            // if (target.hp > 5000 && target.mtype != "snake" && target.mtype != "osnake" && target.mtype != "rat") {
+            //     localStorage.setItem("dangerousTargetFound", new Date / 1000)
+            //     localStorage.setItem("gCombatState", "tank")
+            //     target.attacking++;
+            // }
 
             if(targetStrat == "pull"){
                 var targetPuller = mobPuller;
