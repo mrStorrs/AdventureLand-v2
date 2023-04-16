@@ -98,6 +98,7 @@ function create_monitor_ui(bwi,char_name,child_block,enable_map) {
     { name: "TestLine", type: "text", label: "mHunt", getter: () => localStorage.get("hunt0") + "|" + localStorage.get("hunt1") + "|" + localStorage.get("hunt2") },
     { name: "TestLine2", type: "text", label: "mHuntTask", getter: () => localStorage.get("hunt0task") + "|" + localStorage.get("hunt1task") + "|" + localStorage.get("hunt2task") },
     { name: "TestLine3", type: "text", label: "mHuntc", getter: () => localStorage.get("hunt0c") + "|" + localStorage.get("hunt1c") + "|" + localStorage.get("hunt2c") },
+    { name: "TestLine5", type: "text", label: "mHuntFound", getter: () => localStorage.get("huntFound")},
     { name: "TestLine4", type: "text", label: "mobs", getter: () => localStorage.get("mobsToFarm") },
     {name: "ttlu", type: "text", label: "TTLU", 
       getter:()=>xp_ph <= 0 && "N/A" || prettyMilliseconds((last_beat.max_xp-last_beat.xp)*3600000/xp_ph,{unitCount: 2})}
