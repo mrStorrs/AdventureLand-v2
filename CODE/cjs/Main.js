@@ -53,7 +53,7 @@ function Fighter(name) {
     //todoonce i have locations on each one i will be able to 
     //check if we are not in mob[o] territory and smart move
     //if needed.
-    this.mobs_to_farm = ["rat", "snake", "osnake", "greenjr"]
+    this.mobs_to_farm = ["rat", "snake", "osnake", "greenjr", "arcticbee", "bee", "crab", "goo", "minimush", "rat"]
 }
 
 //array creating and holding all fighter objects.
@@ -102,11 +102,11 @@ merchant = {
         'slimestaff': [8, 2],
         'hbow': [8, 2],
         'throwingstars': [8, 2],
-        'coat1': [6, 3],
-        'gloves1': [6, 3],
-        'pants1': [6, 3],
-        'shoes1': [6, 3],
-        'helmet1': [6, 3],
+        // 'coat1': [6, 3],
+        // 'gloves1': [6, 3],
+        // 'pants1': [6, 3],
+        // 'shoes1': [6, 3],
+        // 'helmet1': [6, 3],
         // 'wbook0': [8, 2],
     },
     items_to_compound: {
