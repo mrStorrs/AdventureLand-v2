@@ -2,9 +2,9 @@
 show_json {
     "gold": 9360,
         "item": {
-        "name": "wbreeches",
+            "name": "wbreeches",
             "level": 0
-    },
+        },
     "success": true,
         "response": "gold_received",
             "place": "sell"

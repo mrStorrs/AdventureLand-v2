@@ -8,7 +8,7 @@ async function sellJunk(){
                     if(character.items[itemIndex].p == undefined){
                         itemSellResult = await sell(itemIndex, 1);
                         if(itemSellResult.success){
-                            game_log("action=sellItem " + "goldReceived=" + itemSellResult.gold + " itemSold=" + itemSellResult.name);
+                            game_log("action=sellItem " + "goldReceived=" + itemSellResult.gold + " itemSold=" + itemSellResult.item.name);
                         } else {
                             game_log("action=sellItem " + "itemSellFailed=" + itemSellResult.reason);
                         }

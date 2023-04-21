@@ -103,7 +103,7 @@ setInterval(function () {
             go_upgrade();
         }
 
-        if (distance(character, find_npc("newupgrade")) > 300) {
+        if (distance(character, find_npc("newupgrade")) < 200) {
             if (numItems("mpot1") < 9000) {
                 buy("mpot1", 9000 - numItems("mpot1"));
             }
@@ -123,8 +123,8 @@ setInterval(function () {
 
     }
 
-    // if (numItems("bow") < 1 && (distance(character, find_npc("newupgrade")) < 300) && character.gold > 100000000) {
-    //     buy("bow", 1);
+    // if (numItems("claw") < 1 && (distance(character, find_npc("newupgrade")) < 300) && character.gold > 100000000) {
+    //     buy("claw", 1);
     // }
 
     //go to location of mob to collect items every 15 minutes

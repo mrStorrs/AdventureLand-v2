@@ -102,6 +102,7 @@ merchant = {
         'slimestaff': [8, 2],
         'hbow': [8, 2],
         'throwingstars': [8, 2],
+        'claw': [8, 1],
         // 'coat1': [6, 3],
         // 'gloves1': [6, 3],
         // 'pants1': [6, 3],
@@ -196,6 +197,7 @@ if (character.name == merchant.name) {
                 "cjs/Senditems.js",
                 "cjs/Kiting.js",
                 "cjs/Priest.js",
+                "cjs/Targetting.js",
             ]).then(x => console.log("loaded script ", globalThis.carac_message));
         }
     }

@@ -5,14 +5,17 @@
 var monsterHuntMobs = ["snake", "osnake", "arcticbee", "bee", "crab", "goo", "minimush", "rat"]
 var agitateZones = ["mansion"]
 var attack_mode = true
-var friendlyTargets = []
-var partyTargets = []
+var friendlyTargets = [];
+var partyTargets = [];
 var huntFound = false; 
 var lastAgitate = new Date() / 1000; 
 var moveAttempts = 0; 
 
 //get the player obj from config script
-player = get_current_player();
+var player = get_current_player();
+player.friendlyTargets = [];
+player.targets = []; 
+player.target = {};
 
 //get merchant
 merchant = get_player_names().merchant
@@ -74,8 +77,10 @@ var bestiary = {
     },
     "rat": {
         "strategy": "spread",
-        "location": {map:"mansion", x:0, y:-57}
-    },
+        "location": { map: "mansion", x: -290, y: -424},
+        "location1": { map: "mansion", x: 247, y: -424},
+        "location2": { map: "mansion", x: 0, y: -162},
+    }, 
     "bee": {
         "strategy": "oneshot",
         "location": {map:"main", x:613, y:663}
@@ -267,21 +272,21 @@ setInterval(function () {
 
     //     targets = find_target();
     //     target = targets[0];
-    //     setTarget(target);
+    //     setTarget(player.target);
 
-    //     if (target && character.name == tank) {
+    //     if (player.target && character.name == tank) {
     //         parent.party_list.forEach(fighter => {
     //             send_cm(fighter, target);
     //         })
     //     }
 
-    //     if (target) {
+    //     if (player.target) {
     //         //check if mob has a target.
     //         try {
-    //             var name = get_target_of(target).name;
+    //             var name = get_target_of(player.target).name;
     //             //game_log("targeting " + name);
     //         } catch (err) {
-    //             change_target(target);
+    //             change_target(player.target);
     //         }
     //     }
     //     else {
@@ -305,14 +310,14 @@ setInterval(function () {
      * Combat / attack
      * --------------------------------------------------------------*/
     //check if in range then attack.
-    // if (!is_in_range(target) && character.name == "SliceNdice") {
-    //     move_to_target(target);
-    //     // updateCharacterPosition(targets);
+    // if (!is_in_range(player.target) && character.name == "SliceNdice") {
+    //     move_to_target(player.target);
+    //     // updateCharacterPosition(player.targets);
     // }
 
     // if(character.name != "SliceNdice" && targets.length > 0){
     // } else {
-    //     move_to_target(target); 
+    //     move_to_target(player.target); 
     // }
 
 
@@ -321,18 +326,18 @@ setInterval(function () {
     //     smart_move(find_npc("fancypots"));
     // }
     //attack
-    if (can_attack(target)) {
+    if (can_attack(player.target)) {
         set_message("Attacking");
 
 
         // if (character.name == "SliceNdice") {
-        //     move_to_target(target);
+        //     move_to_target(player.target);
         // } 
         
         // else {
         //     // targetLocations = []; 
         //     // pathTargets = find_target(true);
-        //     // for(target of pathTargets){
+        //     // for(player.target of pathTargets){
         //     //     targetLocations.push([target.x, target.y]);
         //     // }
         //     // getValidCoordinates([character.x, character.y], 10)
@@ -346,7 +351,7 @@ setInterval(function () {
         //     //     game_log(path);
         //     // }
 
-        //     updateCharacterPosition(targets);
+        //     updateCharacterPosition(player.targets);
         // }
 
         //too weak
@@ -354,13 +359,13 @@ setInterval(function () {
             // if(!is_on_cooldown("3shot")){
             //     var can_3shot = 0
             //     for(i=0; i < 3; i++){
-            //         if(can_attack(targets[i])) can_3shot++; 
+            //         if(can_attack(player.targets[i])) can_3shot++; 
             //     }
             //     if (can_3shot == 3) {
             //         use("3shot");
             //     }
             // } else {
-            // attack(target);
+            // attackplayer.target;
             // }
         }
 
@@ -371,7 +376,7 @@ setInterval(function () {
             // else if (!is_on_cooldown("charge") && character.mp > 200) {
             //     change_target(character);
             //     use("charge");
-            //     change_target(target)
+            //     change_target(player.target)
             // }
             // else if (!is_on_cooldown("agitate") && character.mp == character.max_mp ){
             //     use("agitate");
@@ -384,9 +389,9 @@ setInterval(function () {
             //     change_target(get_entity("MoyaTesh"))
             //     use("energize")
             //     game_log("using energize")
-            //     change_target(target);
+            //     change_target(player.target);
             // } else {
-            // attack(target)
+            // attack(player.target)
 
             // }
         }
@@ -396,24 +401,24 @@ setInterval(function () {
             //     change_target(get_entity("MoyaTesh"))
             //     use("energize")
             //     game_log("using energize")
-            //     change_target(target);
+            //     change_target(player.target);
             // } else {
-            // attack(target)
+            // attack(player.target)
 
             // }
         }
 
 
         // else {
-        //     updateCharacterPosition(targets);
+        //     updateCharacterPosition(player.targets);
         // }
-        // if(can_attack(target)){
-        //     attack(target);
+        // if(can_attack(player.target)){
+        //     attack(player.target);
         // }
 
     }
     // else {
-    //     move_to_target(target);
+    //     move_to_target(player.target);
     // }
 
     // Define constants for the character and target speed, attack range, and safe distance
@@ -612,7 +617,7 @@ async function pathLoop() {
             targetLocations = []; 
             // show_json(validNodes);
             pathTargets = find_target(true);
-            for(target of pathTargets){
+            for(player.target of pathTargets){
                 targetLocations.push({x:target.x | 0, y:target.y | 0});
             }
             // getValidCoordinates([character.x | 0, character.y | 0], 5)
@@ -628,7 +633,7 @@ async function pathLoop() {
         } catch (e){
             game_log("error=pathLoop")
             // game_log(e); 
-        // updateCharacterPosition(targets);
+        // updateCharacterPosition(player.targets);
     }
     setTimeout(pathLoop, 1000); 
 }
@@ -639,6 +644,7 @@ async function pathLoop() {
 // + to make this better we could save off locatiopn in local storage
 //   then use it to allow the ppl to follow the others. 
 async function moveLoop() {
+    let b = bestiary[mobs_to_farm[0]]
     if (bestiary[mobs_to_farm[0]] != undefined) {
         strat = bestiary[mobs_to_farm[0]].strategy
     } else {
@@ -651,11 +657,19 @@ async function moveLoop() {
 
     //doing this here since its a relativly slow loop
     localStorage.setItem(character.name + ".hp", character.max_hp - character.hp);
-    if(character.ctype == "priest" && strat != "spread"){
-        if (parseInt(localStorage.getItem("SliceNdice.hp")) > 500 || parseInt(localStorage.getItem("MoyaTesh.hp")) > 500){
-            get_new_target(); 
-        }
-    }
+    // if(character.ctype == "priest" && strat != "spread"){
+    //     if (parseInt(localStorage.getItem("SliceNdice.hp")) > 500){
+    //         let sEntity = Object.values(get_entity("SliceNdice"));
+    //         if(getDistance(sEntity < 300)){
+    //             getNewtarget(); //we want new targets with SliceNdice in it. 
+    //         }
+    //     } else if (parseInt(localStorage.getItem("MoyaTesh.hp")) > 500){
+    //         let sEntity = Object.values(get_entity("SliceNdice"));
+    //         if(getDistance(sEntity < 300)){
+    //             getNewtarget(); //we want new targets with SliceNdice in it. 
+    //         }
+    //     }
+    // }
 
     sNdLoc = localStorage.getItem("SliceNdiceLocation").split(",")
     sNdLoc = {map:sNdLoc[0],
@@ -663,12 +677,12 @@ async function moveLoop() {
         y:parseInt(sNdLoc[2])}
 
     currBestiary = bestiary[mobs_to_farm[0]];
-    if(!smart.moving && !smart.pathing){
-        //we are not even on the same map. 
-        if (character.map != currBestiary.location.map) {
-            move_to_farming_loc();
-        }
-    }
+    // if(!smart.moving && !smart.pathing){
+    //     //we are not even on the same map. 
+    //     if (character.map != currBestiary.location.map) {
+    //         move_to_farming_loc();
+    //     }
+    // }
 
 
 
@@ -681,8 +695,6 @@ async function moveLoop() {
             // if(character.ctype == "priest" && distance(character, target) > character.range){
             //     move_to_target(target);
             // }
-
-
 
             if(strat == "kite"){
                 if (character.name == "SliceNdice") { move_to_target(target) }
@@ -719,6 +731,24 @@ async function moveLoop() {
                     move_to_target(mobPullerLoc);
                 }
 
+            } else if (strat == "spread") {
+                if (character.name == all_fighters_names[0]) {
+                    let d = getDistance(character, b.location)
+                    if (d > 200 && !isSmartMoving()) {
+                        smart_move(b.location);
+                    } else if (!is_in_range(target)){
+                        move_to_target(target);
+                    }
+                } else if (character.name == all_fighters_names[1]) {
+                    let d = getDistance(character, b.location1)
+                    if (d > 200 && !isSmartMoving()) {
+                        smart_move(b.location1);
+                    } else if (!is_in_range(target)){
+                        move_to_target(target);
+                    }
+                } else if (character.name == all_fighters_names[2]) {
+                    move_to_target(target);
+                }
             } else {
                 if(!is_in_range(target)){
                     move_to_target(target);
@@ -733,10 +763,12 @@ async function moveLoop() {
 setTimeout(moveLoop(), 10000)
 
 async function attackLoop() {
+    let target = get_targeted_monster();
     try {
         if (!target) {
+            getNewtarget();
         } else if (can_attack(target) && character.mp > 40 ) {
-            // if(!is_targeted(target)){
+            // if(!is_targeted(player.target)){
             await attack(target)
             // reduce_cooldown("attack", Math.min(...parent.pings))
             // } else {
@@ -752,10 +784,14 @@ async function attackLoop() {
 }
 
 async function warriorAttackLoop() {
+    let target = get_targeted_monster(); 
+    //create a check if you are moving and there is 
+    //a closer enemy to target it. 
     try {
         if (!target) {
+            getNewtarget(); 
         } else if (can_attack(target)) {
-            if (ms_to_next_skill("taunt") == 0 && character.mp > 60 && target.target != character.name) {
+            if (ms_to_next_skill("taunt") == 0 && character.mp > 60 && all_fighters_names.includes(target.target) && character.name != target.target) {
                 await use("taunt");
             }
             else if (ms_to_next_skill("charge") == 0 && character.mp > 200) {
@@ -763,7 +799,7 @@ async function warriorAttackLoop() {
                 await use("charge");
                 change_target(target)
             }
-            else if (ms_to_next_skill("agitate") == 0 && character.mp > 1000 && new Date() / 1000 - lastAgitate > 60 
+            else if (ms_to_next_skill("agitate") == 0 && character.mp > 1000 && new Date() / 1000 - lastAgitate > 30 
                     && target.mtype != "wabbit" && agitateZones.includes(character.map)){
                 lastAgitate = new Date() / 1000; 
                 await use("agitate");
@@ -772,12 +808,14 @@ async function warriorAttackLoop() {
             if (character.mp > 100){
                 await attack(target);
             }
-            // if(!is_targeted(target)){
+            // if(!is_targeted(player.target)){
             // reduce_cooldown("attack", Math.min(...parent.pings))
             // } else {
             // get_new_target(); 
             // }
             /** NOTE: We're now reducing the cooldown based on the ping */
+        } else {
+            // getNewtarget();
         }
     } catch (e) {
         game_log("error=attackLoop")
@@ -829,7 +867,7 @@ async function targetLoop() {
                 if (!target) {
                     get_new_target();
                 } 
-                // else if (is_targeted(target)) {
+                // else if (is_targeted(player.target)) {
                 //     get_new_target();// prolly don
                 // }
             } catch (e) {
@@ -841,7 +879,7 @@ async function targetLoop() {
                 var target = get_targeted_monster();
                 if (!target) {
                     get_new_target();
-                } else if (is_targeted(target))   {
+                } else if (is_targeted(player.target))   {
                     // get_new_target();
                 } 
             } catch (e) {
@@ -853,7 +891,7 @@ async function targetLoop() {
                 var target = get_targeted_monster();
                 if (!target) {
                     get_new_target();
-                } else if (is_targeted(target)) {
+                } else if (is_targeted(player.target)) {
                     // get_new_target();
                 } 
             } catch (e) {
@@ -868,7 +906,7 @@ async function targetLoop() {
                 if(character.name != "SliceNdice"){
                     get_new_target();
                 }
-            } else if (is_targeted(target)) {
+            } else if (is_targeted(player.target)) {
                 // get_new_target();
             }
         } catch (e) {
@@ -883,9 +921,9 @@ async function targetLoop() {
         // move_to_farming_loc();
         get_new_target(); 
     }
-    setTimeout(targetLoop, timeout)
+    setTimeout(player.targetLoop, timeout)
 }
-setTimeout(targetLoop(), 10000)
+// setTimeout(player.targetLoop(), 10000)
 
 function get_new_target() {
     targets = find_target(false);
@@ -903,9 +941,9 @@ function get_new_target() {
 
     //use this for one shot not kite monsters
     if(strat == "oneshot"){
-        if(targets.length > 1 && character.name == "MoyaTesh"){
+        if(player.targets.length > 1 && character.name == "MoyaTesh"){
             target = targets[1];
-        } else if (targets.length > 2 && character.name == "Bandyaid"){
+        } else if (player.targets.length > 2 && character.name == "Bandyaid"){
             target = targets[2]
         } else {
             target = targets[0];
@@ -915,11 +953,11 @@ function get_new_target() {
         target = targets[0];
     }
 
-    if (target) {
+    if (player.target) {
         //check if mob has a target.
-        // setTarget(target);
+        // setTarget(player.target);
         timeTargetAquired = new Date / 1000; 
-        change_target(target);
+        change_target(player.target);
     } else {
         if (strat != "tank"){
             move_to_farming_loc();
@@ -976,41 +1014,37 @@ function find_target(includeTargeted) {
     var friendlyTargets = [];    
     var nearbyParty = [];   
 
-    for (target of entities) {
+    for (player.target of entities) {
         // var targetStrat = bestiary[target.name];
-        if(target.mtype == "wabbit" && character.name == "SliceNdice"){
+        if(player.target.mtype == "wabbit" && character.name == "SliceNdice"){
             // localStorage.setItem("dangerousTargetFound", new Date / 1000)
             // localStorage.setItem("gCombatState", "tank")
             // target.attacking++; 
-            // targets.push(target);
+            // targets.push(player.target);
             continue; 
-        } else if (target.mtype == "wabbit"){
+        } else if (player.target.mtype == "wabbit"){
             continue; 
         }
 
         //create an array to hold all nearby party members. 
-        if(all_fighters_names.includes(target.name)){
-            nearbyParty.push(target); 
+        if(all_fighters_names.includes(player.target.name)){
+            nearbyParty.push(player.target); 
         }
         setPartyTargets(nearbyParty)
 
         //its killing us! get it off our backs. may need to disable this if
         //farming single shot mobs. 
-        if(target.target == character.name && target.type == "monster"){
+        if(player.target.target == character.name && target.type == "monster"){
             target.attacking++;
-            targets.push(target);
+            targets.push(player.target);
         }
 
-        if (mobs_to_farm.includes(target.mtype)) {
+        if (mobs_to_farm.includes(player.target.mtype)) {
             var targetStrat = bestiary[target.mtype].strategy;
             //found a dangerous monster. lets group up. 
-            // if (target.hp > 5000 && target.mtype != "snake" && target.mtype != "osnake" && target.mtype != "rat") {
-            //     localStorage.setItem("dangerousTargetFound", new Date / 1000)
-            //     localStorage.setItem("gCombatState", "tank")
-            //     target.attacking++;
-            // }
 
-            if(targetStrat == "pull"){
+
+            if(player.targetStrat == "pull"){
                 var targetPuller = mobPuller;
             } else {
                 var targetPuller = "SliceNdice"
@@ -1018,9 +1052,9 @@ function find_target(includeTargeted) {
 
             if (localStorage.getItem("gCombatState") == "tank" || targetStrat == "pull" || targetStrat == "tank") {
                 //target if the monster is allready targetting one of us. 
-                if(all_fighters_names.includes(target.target) ){
+                if(all_fighters_names.includes(player.target.target) ){
                     target.attacking++; 
-                    targets.push(target);
+                    targets.push(player.target);
                 }
                 //if we are the tank leader or its a one shotter we can target. 
                 if (character.name == targetPuller || target.hp < character.attack){
@@ -1034,26 +1068,26 @@ function find_target(includeTargeted) {
                     dFromFurthestFighter = getLocLocalFighters();
                     // game_log(dFromFurthestFighter)
                     if (dFromFurthestFighter < 250){
-                        targets.push(target);
+                        targets.push(player.target);
                     }
                 } 
             }
             //not in tank mode 
-            else if (includeTargeted || !is_targeted(target) ) {
-                targets.push(target); // found a mob to farm lets add it to the targets array
+            else if (includeTargeted || !is_targeted(player.target) ) {
+                targets.push(player.target); // found a mob to farm lets add it to the targets array
             } 
-        } else if (target.name == merchant) {
+        } else if (player.target.name == merchant) {
             //check if monster is actually our merchant
             time_now = new Date() / 1000;
             if (time_now - last_send > 3) {
-                send_items(target);
+                send_items(t);
                 last_send = new Date() / 1000;
             }
         }
 
-        if (targetStrat){
-            if (all_fighters_names.includes(target.name) && target.hp < target.max_hp - 500){
-                friendlyTargets.push(target);
+        if (player.targetStrat){
+            if (all_fighters_names.includes(player.target.name) && target.hp < target.max_hp - 500){
+                friendlyTargets.push(player.target);
             }
         }
 
@@ -1063,7 +1097,7 @@ function find_target(includeTargeted) {
             game_log("action=clearingTankCombatState");
             localStorage.setItem("gCombatState", "")
         }
-        // if(target.mtype == "greenjr"){
+        // if(player.target.mtype == "greenjr"){
         //     callForHelp();
         // }
     }
@@ -1153,9 +1187,30 @@ function buy_potions() {
 
 function move_to_farming_loc() {
     // game_log(getDistance(character, bestiary[mobs_to_farm[0]].location))
+    let b = bestiary[mobs_to_farm[0]]
 
     if(bestiary[mobs_to_farm[0]].location.map == character.map && getDistance(character,bestiary[mobs_to_farm[0]].location) < 100){
         return; 
+    }
+
+    //check location 
+    if(b.strategy == "spread"){
+        if(character.name == all_fighters_names[0]){
+            let d = getDistance(character,b.location)
+            if(d < 100){
+                return; 
+            } 
+        } else if (character.name == all_fighters_names[1]){
+            let d = getDistance(character, b.location1)
+            if (d < 100) {
+                return;
+            } 
+        } else if (character.name == all_fighters_names[2]) {
+            let d = getDistance(character, b.location2)
+            if (d < 100) {
+                return;
+            } 
+        }
     }
 
     if (!smart.moving && !smart.pathing ) {
@@ -1194,28 +1249,39 @@ function move_to_farming_loc() {
 //used to move towareds target
 function move_to_target(target) {
     if (target) {
-        if (!smart.moving && !smart.pathing && target != null && can_move_to(target.x, target.y)) {
+        if (!smart.moving && !smart.pathing && target != null && can_move_to(player.target.x, target.y)) {
             moveAttempts = 0; 
             move(
-                character.x + (target.x - character.x) / 2,
-                character.y + (target.y - character.y) / 2
+                character.x + (player.target.x - character.x) / 2,
+                character.y + (player.target.y - character.y) / 2
             );
         } else {
             if (!smart.moving && !smart.pathing) {
+                //implement a conditional to move to smart move to the target
+                //based on certain conditions. 
+                if(all_fighters_names.includes(target.name)){
+                    smart_move(target); 
+                } else {
+                    move_to_farming_loc();
+                }
                 // 
-                // if(getDistance(character, target) < 400  && character.map == target.map || all_fighters_names.includes(target.name)){
+                // if(getDistance(character, target) < 400  && character.map == target.map || all_fighters_names.includes(player.target.name)){
                 //     smart_move({ x: target.x, y: target.y })
                 // } else {
-                    if (moveAttempts > 2 || all_fighters_names.includes(target.name)){
-                        if (character.map == target.map) {
-                            smart_move({ x: target.x, y: target.y })
-                            moveAttempts = 0; 
-                        }
-                    } else {
-                        moveAttempts++;
-                        move_to_farming_loc();
-                        get_new_target();
-                    }
+                //     if (moveAttempts > 2 || all_fighters_names.includes(player.target.name)){
+                //         if (character.map == target.map) {
+                //             smart_move({ x: target.x, y: target.y })
+                //             moveAttempts = 0; 
+                //         }
+                //     } else {
+                //         moveAttempts++;
+                //         move_to_farming_loc();
+                //         // getNewtarget();
+                //     }
+
+                // }  if (character.map != tBeast.location.map || getDistance(character, tBeast.location) > 600) {
+                // getNewtarget(); 
+                // }
                 // }
             }
         }
@@ -1233,45 +1299,52 @@ function setPartyTargets(pTargets){
 
 //todo: create cm's that will call for others to help. 
 async function priestAttackLoop() {
+    let target = get_targeted_monster();
     let cd = 1; 
     skill="attack"
     try {
-        if (can_attack(target)) {
-            if (friendlyTargets.length > 0) {
-                // setTarget(friendlyTargets[0])
-                target = friendlyTargets[0]
-                change_target(target);
-                if(distance(character, target) > character.range){
-                    // game_log (distance(character, target)); 
-                    game_log("character=" + character.name + "friendly target not in-range");
-                    // move_to_target(target);
-                } else {
-                    try {
-                        if(!is_on_cooldown("heal")){
-                            if (target.max_hp - target.hp < 500) {
-                                get_new_target();
-                            }
-                            cd = character.attack; 
-                            skill="heal"
-                            await use("heal");
+        if(!target){
+            // game_log("test")
+            getNewtarget(); 
+        } else {
+            if (can_attack(target)) {
+                if (player.friendlyTargets.length > 0) {
+                    // setTarget(friendlyTargets[0])
+                    if(!all_fighters_names.includes(target.name)){
+                        target = player.friendlyTargets[0]
+                        change_target(target);
+                    }
 
-                            // reduce_cooldown("heal", Math.min(...parent.pings))
+                    if (getDistance(character, target) > character.range) {
+                        // game_log (distance(character, target)); 
+                        game_log("character=" + character.name + "friendly target not in-range");
+                        move_to_target(target); //move to the target to heal. 
+                    } else {
+                        try {
+                            if (!is_on_cooldown("heal")) {
+                                if (target.max_hp - target.hp < 500) {
+                                    getNewtarget();
+                                }
+                                cd = character.attack;
+                                skill = "heal"
+                                await use("heal");
+
+                                // reduce_cooldown("heal", Math.min(...parent.pings))
+                            }
+                        } catch (e) {
+                            game_log("error=priestAttackLoopInner")
                         }
-                    } catch (e){
-                        game_log("error=priestAttackLoopInner")
+
                     }
 
                 }
-
-            } 
-            else if (character.mp > 40) {
-                // if(all_fighters_names.includes(target.name)){
-                //     get_new_target();
-                // }
-                await attack(target)
-                reduce_cooldown("attack", Math.min(...parent.pings))
+                else if (character.mp > 40) {
+                    await attack(target)
+                    reduce_cooldown("attack", Math.min(...parent.pings))
+                }
             }
         }
+
     } catch (e) {
         game_log("error=priestAttackLoop")
     }
@@ -1315,3 +1388,8 @@ function isSmartMoving(){
     }
     return false;
 }
+
+
+
+
+
