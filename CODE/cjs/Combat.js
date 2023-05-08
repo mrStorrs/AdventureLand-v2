@@ -1185,7 +1185,7 @@ function buy_potions() {
     }
 }
 
-function move_to_farming_loc() {
+async function move_to_farming_loc() {
     // game_log(getDistance(character, bestiary[mobs_to_farm[0]].location))
     let b = bestiary[mobs_to_farm[0]]
 
@@ -1206,8 +1206,8 @@ function move_to_farming_loc() {
                 return;
             } 
         } else if (character.name == all_fighters_names[2]) {
-            let d = getDistance(character, b.location2)
-            if (d < 100) {
+            let d = getDistance(character, b.location2) //todo: make this better so that it detects melee users. 
+            if (d < 500) {
                 return;
             } 
         }
@@ -1217,29 +1217,30 @@ function move_to_farming_loc() {
         // game_log(mobs_to_farm[0]);
         if (mobs_to_farm[0] == "snake") {
             if (character.map != "halloween") {
-                smart_move("halloween")
+                await smart_move("halloween")
             } else {
                 if(character.name == "MoyaTesh" || character.name == "BandyAid"){
-                    smart_move({ map: "halloween", x: -392, y: -327 })
+                    await smart_move({ map: "halloween", x: -392, y: -327 })
                 } else {
-                    smart_move({ map: "halloween", x: 327, y: -736 })
+                    await smart_move({ map: "halloween", x: 327, y: -736 })
                 }
             }
         } else if (mobs_to_farm[0] == "bbpompom" && character.map== "wintercave"){
-            smart_move({ map: "wintercave", x: 4, y: -45 })
+            await smart_move({ map: "wintercave", x: 4, y: -45 })
         } else if (mobs_to_farm[0] == "stoneworm" && (character.map != "halloween" && character.map != "spookytown")){
-            smart_move("halloween")
+            await smart_move("halloween")
         } else if (mobs_to_farm[0] == "rat" && character.map == "mansion") {
             if (character.name == "MoyaTesh") {
-                smart_move({ x: -290, y: -424 })
+                await smart_move({ x: -290, y: -424 })
             } else if (character.name == "Bandyaid") {
-                smart_move({x: 247, y: -424 })
+                await smart_move({x: 247, y: -424 })
             } else {
-                smart_move({x: 0, y: -162 })
+                await smart_move({x: 0, y: -162 })
             }
         } else {
-            smart_move(bestiary[mobs_to_farm[0]].location);
+            await smart_move(bestiary[mobs_to_farm[0]].location);
         }
+        getNewtarget(); 
 
     }
 }
@@ -1249,7 +1250,7 @@ function move_to_farming_loc() {
 //used to move towareds target
 function move_to_target(target) {
     if (target) {
-        if (!smart.moving && !smart.pathing && target != null && can_move_to(player.target.x, target.y)) {
+        if (!smart.moving && !smart.pathing && target != null && can_move_to(target.x, target.y) && getDistance(character, target) > character.range) {
             moveAttempts = 0; 
             move(
                 character.x + (player.target.x - character.x) / 2,
@@ -1317,7 +1318,7 @@ async function priestAttackLoop() {
 
                     if (getDistance(character, target) > character.range) {
                         // game_log (distance(character, target)); 
-                        game_log("character=" + character.name + "friendly target not in-range");
+                        // game_log("character=" + character.name + "friendly target not in-range");
                         move_to_target(target); //move to the target to heal. 
                     } else {
                         try {

@@ -109,6 +109,8 @@ merchant = {
         // 'shoes1': [6, 3],
         // 'helmet1': [6, 3],
         // 'wbook0': [8, 2],
+        'epyjamas': [6, 2],
+        'eears': [6, 2],
     },
     items_to_compound: {
         'ringsj': [4, 1],
